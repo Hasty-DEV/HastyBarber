@@ -1,31 +1,39 @@
-import { Button, Container, Form } from "react-bootstrap";
+import React, { useState, FormEvent } from "react";
+import { Button, Container, Form, FormCheck } from "react-bootstrap";
 import { RegisterContainer } from "../../ui/styles/Register/Register.styles";
 import { Link } from "react-router-dom";
 import Icon from "../../ui/assets/Icon.svg";
-import {  useState } from "react";
 import { useCreateUserWithEmailAndPassword } from "react-firebase-hooks/auth";
 import { auth } from "../../api";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
-const Register = () => {
-
-
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+const Register: React.FC = () => {
+  const [email, setEmail] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
+  const [termsAccepted, setTermsAccepted] = useState<boolean>(false);
   const [
     createUserWithEmailAndPassword,
     loading,
+    error,
   ] = useCreateUserWithEmailAndPassword(auth);
 
+  const handleSignUp = async (e: FormEvent) => {
+    e.preventDefault();
+    
+    if (!email || !password || !termsAccepted) {
+      toast.error("Por favor, preencha todos os campos e aceite os termos e condições.");
+      return;
+    }
 
-
-  const handleSingOut = (e: { preventDefault: () => void; }) => {
-    e.preventDefault()
-    createUserWithEmailAndPassword(email, password);
-
-    if (loading) {
-      return <p>carregando...</p>
+    try {
+      await createUserWithEmailAndPassword(email, password);
+      toast.success("Registro bem-sucedido!");
+    } catch (error) {
+      toast.error("Erro ao registrar: " );
     }
   };
+
   return (
     <RegisterContainer>
       <Container className="p-4">
@@ -38,17 +46,11 @@ const Register = () => {
         <Form className="w-100">
           <Form.Group className="mb-3 w-100">
             <Form.Control
-              type="text"
-              placeholder="Nome Completo"
-              className="w-100 p-3"
-            />
-          </Form.Group>
-          <Form.Group className="mb-3 w-100">
-            <Form.Control
               type="email"
               placeholder="E-mail"
               className="w-100 p-3"
-              onChange={e => setEmail(e.target.value)}
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
             />
           </Form.Group>
           <Form.Group className="mb-3 w-100">
@@ -56,36 +58,36 @@ const Register = () => {
               type="password"
               placeholder="Senha"
               className="w-100 p-3"
-              onChange={e => setPassword(e.target.value)}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
             />
           </Form.Group>
           <Form.Group className="mb-3 w-100">
-            <Form.Control
-              type="text"
-              placeholder="Telefone"
-              className="w-100 p-3"
+            <FormCheck
+              type="checkbox"
+              label="Aceito os Termos e Condições"
+              checked={termsAccepted}
+              onChange={(e) => setTermsAccepted(e.target.checked)}
             />
-          </Form.Group>
-          <Form.Group className="mb-3 w-100">
-            <Form.Check type="checkbox" label="Aceito os Termos e Condições" />
           </Form.Group>
           <Button
             variant="primary"
             type="submit"
             className="w-100 p-3 bg-light text-dark"
-            onClick={handleSingOut}
+            onClick={handleSignUp}
           >
-            Registrar-se
+            {loading ? 'Registrando...' : 'Registrar-se'}
           </Button>
         </Form>
         <div className="text-center mt-3">
-          <Form.Text>Já Conta?
+          <Form.Text>Já tem uma conta?
             <Link to="/login" className="login-link">
               Faça Login
             </Link>
           </Form.Text>
         </div>
       </Container>
+      <ToastContainer />
     </RegisterContainer>
   );
 };
