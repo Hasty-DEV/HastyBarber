@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import Icon from "../../ui/assets/Icon.svg";
 import {  useState } from "react";
 import { useCreateUserWithEmailAndPassword } from "react-firebase-hooks/auth";
-import { auth } from "../../services/FirebaseConfig/FirebaseConfig";
+import { auth } from "../../api";
 
 const Register = () => {
 

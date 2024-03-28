@@ -2,12 +2,35 @@ import { LoginContainer } from "../../ui/styles/Login/Login.styles";
 import Icon from "../../ui/assets/Icon.svg";
 import { Button, Container, Form } from "react-bootstrap";
 import { Link } from "react-router-dom";
+import {api} from '../../api'
 import { FormEvent } from "react";
+
 
 const Login = () => {
   const handleOnSubmit = (e: FormEvent) => {
     e.preventDefault();
   };
+
+const actionLoginGoogle = async () => {
+
+  console.log('foi');
+
+  let result = await api.googleLogin();
+
+
+if(!result){
+
+  alert('erro google login');
+
+}else{
+
+
+
+}
+
+
+}
+
   return (
     <LoginContainer className="d-flex flex-column align-items-center p-5">
       <Link to="/">
@@ -33,6 +56,10 @@ const Login = () => {
           <div className="text-end">
             <Form.Text>Esqueceu a senha?</Form.Text>
           </div>
+
+
+        <button  onClick={actionLoginGoogle}>login google</button>
+
           <Button type="submit" className="w-100 p-3 bg-dark mt-2">
             Login
           </Button>
