@@ -1,35 +1,43 @@
+import { useState } from 'react';
 import { LoginContainer } from "../../ui/styles/Login/Login.styles";
 import Icon from "../../ui/assets/Icon.svg";
 import { Button, Container, Form } from "react-bootstrap";
 import { Link } from "react-router-dom";
-import {api} from '../../api'
+import { api } from '../../api';
 import { FormEvent } from "react";
+import firebase from 'firebase/compat/app';
+import 'firebase/auth';
+
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faGoogle } from '@fortawesome/free-brands-svg-icons';
 
 
 const Login = () => {
+  const [user, setUser] = useState<firebase.User | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
   const handleOnSubmit = (e: FormEvent) => {
     e.preventDefault();
+ 
   };
 
-const actionLoginGoogle = async () => {
+  const actionLoginGoogle = async () => {
+    try {
+      console.log('Iniciando login com o Google...');
+      const result = await api.googleLogin();
 
-  console.log('foi');
+      if (!result) {
+        throw new Error('Erro ao efetuar login com o Google.');
+      }
 
-  let result = await api.googleLogin();
-
-
-if(!result){
-
-  alert('erro google login');
-
-}else{
-
-
-
-}
-
-
-}
+      console.log('Login com o Google bem-sucedido:', result);
+      setUser(result.user); 
+ 
+    } catch (error:any) {
+      console.error('Erro durante o login com o Google:', error.message);
+      setError('Erro durante o login com o Google. Por favor, tente novamente.');
+    }
+  };
 
   return (
     <LoginContainer className="d-flex flex-column align-items-center p-5">
@@ -58,9 +66,13 @@ if(!result){
           </div>
 
 
-        <button  onClick={actionLoginGoogle}>login google</button>
+          <Button className="w-100 d-flex align-items-center justify-content-center p-3 mt-2" onClick={actionLoginGoogle}>
+             <FontAwesomeIcon icon={faGoogle} className="me-2" />
+             Login com Google
+          </Button>
 
-          <Button type="submit" className="w-100 p-3 bg-dark mt-2">
+
+          <Button type="submit" variant="dark" className="w-100 p-3 bg-dark mt-2">
             Login
           </Button>
         </Form>
@@ -71,6 +83,11 @@ if(!result){
             </Link>
           </Form.Text>
         </div>
+        {error && (
+          <div className="text-danger mt-3">
+            <p>{error}</p>
+          </div>
+        )}
       </Container>
     </LoginContainer>
   );
