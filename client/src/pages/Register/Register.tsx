@@ -7,6 +7,7 @@ import { useCreateUserWithEmailAndPassword } from "react-firebase-hooks/auth";
 import { auth } from "../../api";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { UserCredential } from "firebase/auth";
 
 const Register: React.FC = () => {
   const [email, setEmail] = useState<string>('');
@@ -20,17 +21,22 @@ const Register: React.FC = () => {
 
   const handleSignUp = async (e: FormEvent) => {
     e.preventDefault();
-    
+
     if (!email || !password || !termsAccepted) {
       toast.error("Por favor, preencha todos os campos e aceite os termos e condições.");
       return;
     }
 
     try {
-      await createUserWithEmailAndPassword(email, password);
-      toast.success("Registro bem-sucedido!");
+      const userCredential: UserCredential | undefined = await createUserWithEmailAndPassword(email, password);
+
+      if (userCredential !== undefined) {
+        toast.success("Registro bem-sucedido!");
+      } else {
+        toast.error("Erro ao registrar.");
+      }
     } catch (error) {
-      toast.error("Erro ao registrar: " );
+      toast.error("Erro ao registrar: " + (error as Error).message);
     }
   };
 
