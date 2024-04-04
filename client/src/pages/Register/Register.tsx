@@ -1,7 +1,7 @@
 import React, { useState, FormEvent } from "react";
 import { Button, Container, Form, FormCheck } from "react-bootstrap";
 import { RegisterContainer } from "../../ui/styles/Register/Register.styles";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Icon from "../../ui/assets/Icon.svg";
 import { useCreateUserWithEmailAndPassword } from "react-firebase-hooks/auth";
 import { auth } from "../../api";
@@ -15,9 +15,9 @@ const Register: React.FC = () => {
   const [termsAccepted, setTermsAccepted] = useState<boolean>(false);
   const [
     createUserWithEmailAndPassword,
-    loading,
-    error,
+    loading
   ] = useCreateUserWithEmailAndPassword(auth);
+  const navigate = useNavigate()
 
   const handleSignUp = async (e: FormEvent) => {
     e.preventDefault();
@@ -32,9 +32,8 @@ const Register: React.FC = () => {
 
       if (userCredential !== undefined) {
         toast.success("Registro bem-sucedido!");
-      } else {
-        toast.error("Erro ao registrar.");
       }
+      navigate("/login")
     } catch (error) {
       toast.error("Erro ao registrar: " + (error as Error).message);
     }

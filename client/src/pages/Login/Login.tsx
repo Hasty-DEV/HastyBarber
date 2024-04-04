@@ -13,7 +13,7 @@ import { faGoogle } from '@fortawesome/free-brands-svg-icons';
 
 
 const Login = () => {
-  const [user, setUser] = useState<firebase.User | null>(null);
+  const [, setUser] = useState<firebase.User | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const handleOnSubmit = (e: FormEvent) => {
