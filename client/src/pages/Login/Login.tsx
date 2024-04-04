@@ -1,12 +1,15 @@
-import { useState } from 'react';
+import { useState, FormEvent } from 'react';
 import { Link, useNavigate } from "react-router-dom";
 import { LoginContainer } from "../../ui/styles/Login/Login.styles";
 import Icon from "../../ui/assets/Icon.svg";
-import { Button, Container, Form } from "react-bootstrap";
+import { Button, Container, Form, FormCheck } from "react-bootstrap";
 import { api } from '../../api';
-import { FormEvent } from "react";
 import firebase from 'firebase/compat/app';
 import 'firebase/auth';
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGoogle } from '@fortawesome/free-brands-svg-icons';
@@ -20,11 +23,30 @@ interface UserData {
 const Login = () => {
   const [, setUser] = useState<firebase.User | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [email, setEmail] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
   const navigate = useNavigate();  
 
-  const handleOnSubmit = (e: FormEvent) => {
+  const handleLogin = async (e: FormEvent) => {
     e.preventDefault();
-  };
+    
+    if (!email ||!password) {
+      toast.error('Por favor, preencha todos os campos.');
+      return;
+  }
+
+  const auth = getAuth();
+  try {
+    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    if (userCredential !== undefined) {
+      toast.success("Login bem-sucedido!");
+      setTimeout(() => navigate('/dashboard'), 3000); 
+
+    }
+  } catch (error) {
+    toast.error('Email/Senha incorreta');
+  }
+};
 
   const actionLoginGoogle = async (): Promise<UserData | null> => {
     try {
@@ -55,7 +77,6 @@ const Login = () => {
   };
 
 
-
   return (
     <LoginContainer className="d-flex flex-column align-items-center p-5">
       <Link to="/">
@@ -63,12 +84,14 @@ const Login = () => {
       </Link>
       <h2 className="display-5 mt-3">Bem-Vindo de Volta!</h2>
       <Container>
-        <Form className="pt-5 w-100" onSubmit={(e) => handleOnSubmit(e)}>
+        <Form className="pt-5 w-100" onSubmit={(e) => handleLogin(e)}>
           <Form.Group className="mb-3 w-100">
             <Form.Control
               type="text"
-              placeholder="Nome ou Telefone"
+              placeholder="E-mail"
               className="w-100 p-3"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
             />
           </Form.Group>
           <Form.Group className="mb-3">
@@ -76,6 +99,8 @@ const Login = () => {
               type="password"
               placeholder="Senha"
               className="w-100 p-3"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
             />
           </Form.Group>
           <div className="text-end">
@@ -106,6 +131,7 @@ const Login = () => {
           </div>
         )}
       </Container>
+      <ToastContainer />
     </LoginContainer>
   );
 };
