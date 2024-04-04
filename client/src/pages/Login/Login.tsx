@@ -2,7 +2,7 @@ import { useState, FormEvent } from 'react';
 import { Link, useNavigate } from "react-router-dom";
 import { LoginContainer } from "../../ui/styles/Login/Login.styles";
 import Icon from "../../ui/assets/Icon.svg";
-import { Button, Container, Form, FormCheck } from "react-bootstrap";
+import { Button, Container, Form } from "react-bootstrap";
 import { api } from '../../api';
 import firebase from 'firebase/compat/app';
 import 'firebase/auth';
