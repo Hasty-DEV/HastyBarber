@@ -1,6 +1,10 @@
-import { Container } from "react-bootstrap"
+import { Container } from "react-bootstrap";
+import { useLocation } from "react-router-dom";
 
 const Dashboard = () => {
+    const location = useLocation();
+    const userData = location.state.userData;
+
     return (
         <main>
             <Container>
@@ -22,9 +26,15 @@ const Dashboard = () => {
                         <button>Adicionar Obs</button>
                     </div>
                 </div>
+                {userData && (
+                    <div>
+                        <p>Olá, {userData.displayName}</p>
+                        <img src={userData.photoURL} alt="Foto do usuário" />
+                    </div>
+                )}
             </Container>
         </main>
     )
 }
 
-export default Dashboard
+export default Dashboard;

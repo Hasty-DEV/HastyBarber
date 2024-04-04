@@ -1,8 +1,8 @@
 import { useState } from 'react';
+import { Link, useNavigate } from "react-router-dom";
 import { LoginContainer } from "../../ui/styles/Login/Login.styles";
 import Icon from "../../ui/assets/Icon.svg";
 import { Button, Container, Form } from "react-bootstrap";
-import { Link } from "react-router-dom";
 import { api } from '../../api';
 import { FormEvent } from "react";
 import firebase from 'firebase/compat/app';
@@ -11,33 +11,50 @@ import 'firebase/auth';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGoogle } from '@fortawesome/free-brands-svg-icons';
 
+interface UserData {
+  id: string;
+  displayName: string | null;
+  photoURL: string | null;
+}
 
 const Login = () => {
   const [, setUser] = useState<firebase.User | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const navigate = useNavigate();  
 
   const handleOnSubmit = (e: FormEvent) => {
     e.preventDefault();
- 
   };
 
-  const actionLoginGoogle = async () => {
+  const actionLoginGoogle = async (): Promise<UserData | null> => {
     try {
       console.log('Iniciando login com o Google...');
       const result = await api.googleLogin();
 
-      if (!result) {
+      if (!result || !result.user) {
         throw new Error('Erro ao efetuar login com o Google.');
       }
 
       console.log('Login com o Google bem-sucedido:', result);
-      setUser(result.user); 
- 
+
+      const userData: UserData = {
+        id: result.user.uid,
+        displayName: result.user.displayName,
+        photoURL: result.user.photoURL
+      };
+
+      setUser(result.user);
+      navigate('/dashboard', { state: { userData } });  
+      return userData;
+
     } catch (error:any) {
       console.error('Erro durante o login com o Google:', error.message);
       setError('Erro durante o login com o Google. Por favor, tente novamente.');
+      return null;
     }
   };
+
+
 
   return (
     <LoginContainer className="d-flex flex-column align-items-center p-5">
