@@ -28,6 +28,3 @@ const Dashboard = () => {
 }
 
 export default Dashboard
-
-import styled from "styled-components";
-|
