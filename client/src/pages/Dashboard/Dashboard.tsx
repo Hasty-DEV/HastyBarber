@@ -6,7 +6,9 @@ import { FaRegClock } from "react-icons/fa";
 
 const Dashboard = () => {
     const location = useLocation();
-    const userData = location.state.userData;
+    const usuario = location.state;
+
+ console.log(location.state);
 
     return (
         <DashboardContainer>
@@ -30,15 +32,15 @@ const Dashboard = () => {
                             <FaRegClock size={30} />
                             <span>Hora</span>
                             <hr />
-                            <Button variant="Link">Adicionar Obs</Button>
+                            <Button variant="Link">Adicionar Obs </Button>
                         </div>
                     </SchedulingContainer>
-                    {userData ? (
+                    {usuario.userData.displayName && (
                         <div>
-                            <p>Olá, {userData.displayName}</p>
-                            <img src={userData.photoURL} alt="Foto do usuário" />
+                            <p>Olá, {usuario.userData.displayName}</p>
+                            <img src={usuario.userData.photoURL} alt="Foto do usuário" />
                         </div>
-                    ): null}
+                    )}
                 </div>
             </Container>
         </DashboardContainer>
