@@ -3,20 +3,18 @@ import { Button, Container, Form, FormCheck } from "react-bootstrap";
 import { RegisterContainer } from "../../ui/styles/Register/Register.styles";
 import { Link, useNavigate } from "react-router-dom";
 import Icon from "../../ui/assets/Icon.svg";
-import { useCreateUserWithEmailAndPassword } from "react-firebase-hooks/auth";
+ 
 import { auth } from "../../api";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { UserCredential } from "firebase/auth";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+ 
 
 const Register: React.FC = () => {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [termsAccepted, setTermsAccepted] = useState<boolean>(false);
-  const [
-    createUserWithEmailAndPassword,
-    loading
-  ] = useCreateUserWithEmailAndPassword(auth);
+ 
   const navigate = useNavigate()
 
   const handleSignUp = async (e: FormEvent) => {
@@ -28,7 +26,7 @@ const Register: React.FC = () => {
     }
 
     try {
-      const userCredential: UserCredential | undefined = await createUserWithEmailAndPassword(email, password);
+      const userCredential  = await createUserWithEmailAndPassword(auth ,email, password);
 
       if (userCredential !== undefined) {
         toast.success("Registro bem-sucedido!");
@@ -81,7 +79,7 @@ const Register: React.FC = () => {
             className="w-100 p-3 bg-light text-dark"
             onClick={handleSignUp}
           >
-            {loading ? 'Registrando...' : 'Registrar-se'}
+            Registrar-se
           </Button>
         </Form>
         <div className="text-center mt-3">
