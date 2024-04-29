@@ -4,7 +4,7 @@ import { RegisterContainer } from "../../ui/styles/Register/Register.styles";
 import { Link, useNavigate } from "react-router-dom";
 import Icon from "../../ui/assets/Icon.svg";
  
-import { auth } from "../../api";
+import { auth } from "../../data/services/Api/api";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { createUserWithEmailAndPassword } from "firebase/auth";

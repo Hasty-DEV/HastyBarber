@@ -1,63 +1,54 @@
-import { Button, Container } from "react-bootstrap";
-import { useLocation } from "react-router-dom";
-import { GiBeard } from "react-icons/gi";
-import { FaCalendarAlt } from "react-icons/fa";
-import { FaRegClock } from "react-icons/fa";
+import { useState, useEffect } from "react";
+import { Container } from "react-bootstrap";
+import axios from "axios";
+
+const baseURL = "http://localhost:3001/";
 
 const Dashboard = () => {
-    const location = useLocation();
-    const usuario = location.state;
+    const [data, setData] = useState<any>();
 
- console.log(location.state);
+    useEffect(() => {
+        axios.get(baseURL)
+            .then((response) => {
+                setData(response.data);
+            })
+            .catch((error) => {
+                console.error("Error fetching data:", error);
+                setData(null); 
+            });
+    }, []);
 
     return (
         <DashboardContainer>
             <Container>
-                <div className="d-flex flex-column align-items-center justify-content-center ">
+                <div className="d-flex flex-column align-items-center justify-content-center">
                     <h2 className="fw-bold mt-3 text-start w-75">Próximo Agendamento</h2>
-                    <SchedulingContainer className="d-flex justify-content-center align-items-center px-4 pt-4 pb-4 rounded w-75 ">
-                        <div className="d-flex flex-column justify-content-center align-items-center px-2">
-                            <GiBeard size={30} />
-                            <span>Barbeiro</span>
-                            <hr />
-                            <Button variant="Link">Reagendar</Button>
-                        </div>
-                        <div className="d-flex flex-column justify-content-center align-items-center px-2">
-                            <FaCalendarAlt size={30} />
-                            <span>Data</span>
-                            <hr />
-                            <Button variant="Link">Adicionar Serviço</Button>
-                        </div>
-                        <div className="d-flex flex-column justify-content-center align-items-center px-2">
-                            <FaRegClock size={30} />
-                            <span>Hora</span>
-                            <hr />
-                            <Button variant="Link">Adicionar Obs </Button>
-                        </div>
-                    </SchedulingContainer>
-                    {usuario.userData.displayName && (
-                        <div>
-                            <p>Olá, {usuario.userData.displayName}</p>
-                            <img src={usuario.userData.photoURL} alt="Foto do usuário" />
-                        </div>
-                    )}
+                    {data ? <Scheduling /> : <ScheduleService />}
+                    <Calendar />
                 </div>
             </Container>
+            <Container fluid>
+                <BottomNavbar />
+            </Container>
         </DashboardContainer>
-    )
-}
+    );
+};
 
 export default Dashboard;
 
 
 import styled from "styled-components";
+import Scheduling from "../../ui/partials/Scheduling/Scheduling";
+import ScheduleService from "../../ui/partials/ScheduleService/ScheduleService";
+import Calendar from "../../ui/partials/Calendar/Calendar";
+import BottomNavbar from "../../ui/partials/BottomNavbar/BottomNavbar";
 
 export const DashboardContainer = styled.main`
+    height: 100vh;
+    width: 100vw;
+
     hr {
         width: 100%; 
     }
 `;
 
-export const SchedulingContainer = styled.div`
-    border: 1px solid rgba(0, 0, 0, 0.3);
-`;
